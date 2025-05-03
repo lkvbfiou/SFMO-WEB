@@ -4,14 +4,16 @@
   <meta charset="UTF-8">
   <title>Admin: Manage Homes</title>
   <style>
-    body { font-family: Arial; padding: 1em; }
-    .preview { max-width: 200px; margin-top: .5em; display: block; }
-    .home-item { border:1px solid #ccc; padding:.5em; margin:.5em 0; }
-    .home-item button { margin-top:.5em; display:block; }
-    button { padding:.5em 1em; background:#660000; color:#fff; border:none; border-radius:4px; cursor:pointer; }
-    button:hover { background:#440000; }
-    label { display:block; margin-bottom:.5em; }
-    input, textarea { width:100%; padding:.5em; margin-top:.2em; box-sizing:border-box; }
+    body { font-family: Arial, sans-serif; padding: 1em; max-width: 600px; margin: auto; }
+    label { display: block; margin-bottom: 1em; }
+    input, textarea { width: 100%; padding: 0.5em; margin-top: 0.25em; box-sizing: border-box; }
+    .preview { max-width: 100%; height: auto; margin-top: 0.5em; display: block; }
+    .home-item { border: 1px solid #ccc; padding: 0.75em; margin: 0.75em 0; border-radius: 4px; background: #f9f9f9; }
+    .home-item button { margin-top: 0.5em; }
+    button { padding: 0.5em 1em; background: #660000; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #440000; }
+    #deleteAllHomesBtn { background: #999; margin-top: 1em; }
+    #deleteAllHomesBtn:hover { background: #777; }
   </style>
 </head>
 <body>
@@ -21,7 +23,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import { getDatabase }   from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
-    // **Your actual Firebase config below**
     const firebaseConfig = {
       apiKey: "AIzaSyAb-MHQwnocdR3hfbh3jjR0TdfXG_ZWxVU",
       authDomain: "realestatehomesadmin.firebaseapp.com",
@@ -41,40 +42,47 @@
 
   <h1>Add a New Home</h1>
   <form id="homeForm">
-    <label>Title
+    <label>
+      Title
       <input type="text" id="title" required>
     </label>
-    <label>Address
-      <input type="text" id="address">
+    <label>
+      Address
+      <input type="text" id="address" placeholder="e.g., 123 Main St">
     </label>
-    <label>Price
-      <input type="text" id="price" required>
+    <label>
+      Price
+      <input type="text" id="price" placeholder="$350K" required>
     </label>
-    <label>Description
-      <textarea id="desc" rows="3" required></textarea>
+    <label>
+      Description
+      <textarea id="desc" rows="3" placeholder="Short description" required></textarea>
     </label>
-    <label>Liaison Phone
-      <input type="text" id="phone">
+    <label>
+      Liaison Phone
+      <input type="text" id="phone" placeholder="(555) 123-4567">
     </label>
-    <label>Liaison Email
-      <input type="email" id="email">
+    <label>
+      Liaison Email
+      <input type="email" id="email" placeholder="agent@example.com">
     </label>
-    <label>External Listing URL
-      <input type="url" id="link" placeholder="https://…">
+    <label>
+      External Listing URL
+      <input type="url" id="link" placeholder="https://zillow.com/...">
     </label>
     <label>
       Image
       <input type="file" id="imgFile" accept="image/*" required>
-      <img id="imgPreview" class="preview" alt="">
+      <img id="imgPreview" class="preview" alt="Image preview">
     </label>
     <button type="submit">Save Home</button>
   </form>
 
   <h2>Current Homes</h2>
   <div id="homesList"></div>
+
   <button id="deleteAllHomesBtn">Delete All Homes</button>
 
-  <!-- Module script must be type="module" -->
   <script src="../js/admin.js" type="module" defer></script>
 </body>
 </html>
