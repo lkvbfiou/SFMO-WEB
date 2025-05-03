@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>American Landmark Realty | Home</title>
+  <meta name="description" content="American Landmark Realty based in St. Charles, Missouri provides real estate services for buyers and sellers of homes, commercial buildings and property in the St. Louis metropolitan area. We specialize in short sales, foreclosures, and real estate negotiations">
+  <meta name="keywords" content="real estate agent, sell my home, st louis real estate, short sale real estate agents, st louis real estate listings, real estate short sale short sale real estate agent">
+
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/jquery-3.7.1.min.js" defer></script>
+  <script src="js/main.js" defer></script>
+  <script src="js/slider.js" type="module" defer></script>
+</head>
+<body id="page1">
+
+  <!-- Firebase SDK Init -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getDatabase } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAb-MHQwnocdR3hfbh3jjR0TdfXG_ZWxVU",
+      authDomain: "realestatehomesadmin.firebaseapp.com",
+      databaseURL: "https://realestatehomesadmin-default-rtdb.firebaseio.com",
+      projectId: "realestatehomesadmin",
+      storageBucket: "realestatehomesadmin.appspot.com",
+      messagingSenderId: "243682405794",
+      appId: "1:243682405794:web:5bf48d15fda558a62996fb",
+      measurementId: "G-FDXTBEV5TN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    window.firebaseApp = app;
+    window.firebaseDb = db;
+  </script>
+
+  <div class="box-1"></div>
+
+  <nav class="site-nav">
+    <ul>
+      <li><a href="index.html" class="act"><span>Home</span></a></li>
+      <li><a href="webpages/Buying.html"><span>Buying</span></a></li>
+      <li><a href="webpages/Selling.html"><span>Selling</span></a></li>
+      <li><a href="webpages/ShortSales.html"><span>Short Sales</span></a></li>
+      <li><a href="webpages/Foreclosures.html"><span>Foreclosures</span></a></li>
+      <li><a href="webpages/financing.html"><span>Financing</span></a></li>
+      <li><a href="webpages/contact.html" class="last"><span>Contact</span></a></li>
+    </ul>
+    <div class="logo">
+      <a href="index.html">
+        <img src="images/home.png" alt="American Landmark Realty Logo">
+      </a>
+    </div>
+  </nav>
+
+  <header class="wrapper">
+    <section class="slider">
+      <img src="images/home.png" alt="Beautiful home">
+    </section>
+  </header>
+
+  <main id="content" class="container">
+    <section class="box2">
+      <div class="inner">
+        <h2>About American Landmark Realty</h2>
+        <p>Based in St. Charles, Missouri, we serve buyers and sellers across the St. Louis metro area. Whether you're looking for your dream home or navigating a short sale, we're here to help.</p>
+      </div>
+    </section>
+
+    <!-- Your scroller container -->
+    <div class="home-scroller-container"></div>
+
+    <section class="box3">
+      <div class="inner">
+        <h2>Get In Touch</h2>
+        <p>Ready to start your real estate journey? <a href="webpages/contact.html">Contact us today</a> for a free consultation.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer id="footer">
+    <p>&copy; 2025 American Landmark Realty. All rights reserved. <a href="privacy.html">Privacy Policy</a></p>
+  </footer>
+</body>
+</html>
