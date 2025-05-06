@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Real Estate Listings</title>
+    <link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css" />
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px;
+            background: #f0f0f0;
+        }
+        .listing {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .address {
+            font-size: 1.4em;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .swiper-container {
+            width: 85%;
+            margin: 0 auto;
+        }
+        .swiper {
+            width: 100%;
+            height: 400px;
+        }
+        .swiper-slide {
+            text-align: center;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .swiper-slide img {
+            max-width: 90%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .details-panel {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f8f8;
+            border-radius: 8px;
+            display: none;
+        }
+        .more-info-btn {
+            background: #2c7a2c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .loading-placeholder {
+            height: 400px;
+            background: #eee;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Property Listings</h1>
+    <div id="listings-container"></div>
+
+    <!-- Loading GIF Template -->
+    <template id="loading-template">
+        <div class="loading-placeholder">
+            <img src="loading.gif" alt="Loading..." style="width: 50px; height: 50px;">
+        </div>
+    </template>
+
+    <!-- Swiper JS -->
+    <script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-database-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            databaseURL: "https://realestatehomesadmin-default-rtdb.firebaseio.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        const app = firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const listingsContainer = document.getElementById('listings-container');
+        const swiperInstances = {};
+        let loadedListings = new Set();
+
+        // Improved listing handler
+        function handleListingUpdate(index, listing) {
+            if (!listing.images || listing.images.length === 0) {
+                removePlaceholder(index);
+                return;
+            }
+
+            if (loadedListings.has(index)) return;
+            loadedListings.add(index);
+
+            const swiperId = `swiper-${index}`;
+            const listingDiv = createListingElement(index, listing, swiperId);
+            
+            if (!listingsContainer.children[index]) {
+                listingsContainer.appendChild(listingDiv);
+            } else {
+                listingsContainer.replaceChild(listingDiv, listingsContainer.children[index]);
+            }
+
+            setTimeout(() => {
+                swiperInstances[index] = new Swiper(`#${swiperId}`, {
+                    loop: true,
+                    navigation: {
+                        nextEl: '.swiper-button-next',
+                        prevEl: '.swiper-button-prev',
+                    },
+                    pagination: {
+                        el: '.swiper-pagination',
+                        clickable: true,
+                    },
+                });
+            }, 100);
+        }
+
+        function createListingElement(index, listing, swiperId) {
+            const div = document.createElement('div');
+            div.className = 'listing';
+            div.innerHTML = `
+                <div class="address">${listing.address}</div>
+                <div class="price-tag">${listing.price}</div>
+                <div class="swiper-container">
+                    <div class="swiper" id="${swiperId}">
+                        <div class="swiper-wrapper">
+                            ${listing.images.map(img => `
+                                <div class="swiper-slide">
+                                    <img src="${img}" alt="Property image" onerror="this.style.display='none'">
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="swiper-pagination"></div>
+                        <div class="swiper-button-next"></div>
+                        <div class="swiper-button-prev"></div>
+                    </div>
+                </div>
+                <button class="more-info-btn" onclick="toggleDetails(${index})">More Info</button>
+                <div class="details-panel" id="details-${index}">
+                    <p>Listing ID: ${listing.listingId}</p>
+                    <p>Beds: ${listing.beds}</p>
+                    <p>Baths: ${listing.baths}</p>
+                </div>
+            `;
+            return div;
+        }
+
+        function removePlaceholder(index) {
+            const placeholder = listingsContainer.children[index];
+            if (placeholder) placeholder.remove();
+        }
+
+        window.toggleDetails = function(index) {
+            const details = document.getElementById(`details-${index}`);
+            details.style.display = details.style.display === 'none' ? 'block' : 'none';
+        };
+
+        // Real-time listener with cleanup
+        database.ref('listings/data').on('value', (snapshot) => {
+            const listings = snapshot.val() || {};
+            Object.entries(listings).forEach(([key, listing]) => {
+                const index = parseInt(key);
+                if (listing.images && listing.images.length > 0) {
+                    handleListingUpdate(index, listing);
+                }
+            });
+            
+            // Clean up extra placeholders
+            const existingListings = Object.keys(listings).length;
+            Array.from(listingsContainer.children).forEach((child, index) => {
+                if (index >= existingListings) child.remove();
+            });
+        });
+    </script>
+</body>
+</html>
